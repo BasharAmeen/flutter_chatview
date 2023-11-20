@@ -20,12 +20,14 @@
  * SOFTWARE.
  */
 import 'package:chatview/src/models/models.dart';
+import 'package:chatview/src/models/video_message.dart';
 import 'package:chatview/src/models/voice_message_configuration.dart';
 import 'package:flutter/material.dart';
 
 class MessageConfiguration {
   /// Provides configuration of image message appearance.
   final ImageMessageConfiguration? imageMessageConfig;
+  final VideoMessageConfiguration? videoMessageConfiguration;
 
   /// Provides configuration of image message appearance.
   final MessageReactionConfiguration? messageReactionConfig;
@@ -45,5 +47,6 @@ class MessageConfiguration {
     this.emojiMessageConfig,
     this.customMessageBuilder,
     this.voiceMessageConfig,
+    this.videoMessageConfiguration,
   });
 }

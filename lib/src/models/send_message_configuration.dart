@@ -201,6 +201,44 @@ class ImagePickerConfiguration {
 }
 
 /// Styling configuration for recorder widget.
+// class VoiceRecordingConfiguration {
+//   const VoiceRecordingConfiguration({
+//     this.waveStyle,
+//     this.padding,
+//     this.margin,
+//     this.decoration,
+//     this.backgroundColor,
+//     this.micIcon,
+//     this.recorderIconColor,
+//     this.stopIcon,
+//   });
+
+//   /// Applies styles to waveform.
+//   final WaveStyle? waveStyle;
+
+//   /// Applies padding around waveform widget.
+//   final EdgeInsets? padding;
+
+//   /// Applies margin around waveform widget.
+//   final EdgeInsets? margin;
+
+//   /// Box decoration containing waveforms
+//   final BoxDecoration? decoration;
+
+//   /// If only background color needs to be changed then use this instead of
+//   /// decoration.
+//   final Color? backgroundColor;
+
+//   /// An icon for recording voice.
+//   final Widget? micIcon;
+
+//   /// An icon for stopping voice recording.
+//   final Widget? stopIcon;
+
+//   /// Applies color to mic and stop icon.
+//   final Color? recorderIconColor;
+// }
+
 class VoiceRecordingConfiguration {
   const VoiceRecordingConfiguration({
     this.waveStyle,
@@ -211,6 +249,11 @@ class VoiceRecordingConfiguration {
     this.micIcon,
     this.recorderIconColor,
     this.stopIcon,
+    this.sampleRate,
+    this.bitRate,
+    this.androidEncoder,
+    this.iosEncoder,
+    this.androidOutputFormat,
   });
 
   /// Applies styles to waveform.
@@ -237,4 +280,31 @@ class VoiceRecordingConfiguration {
 
   /// Applies color to mic and stop icon.
   final Color? recorderIconColor;
+
+  /// Below parameter are use for changing the audio recoding quality.
+
+  ///The sample-rate for audio in samples per second.
+  /// Higher the sample-rate, more sample will generate per second,
+  /// but also larger the file size.
+  ///default value:44100
+  final int? sampleRate;
+
+  /// Bitrate is the amount of data per second that the codec uses to encode
+  /// the audio.
+  /// Higher the bitrate, the better the quality, but also larger
+  /// the file size.
+  /// default value: null (platform will decide)
+  final int? bitRate;
+
+  /// Audio encoder to be used for recording for IOS
+  /// default value:IosEncoder.kAudioFormatMPEG4AAC
+  final IosEncoder? iosEncoder;
+
+  /// Audio encoder to be used for recording for Android
+  /// default value:AndroidEncoder.aac
+  final AndroidEncoder? androidEncoder;
+
+  /// Audio decoder to be used for recording output for Android
+  /// default value: AndroidOutputFormat.mpeg4
+  final AndroidOutputFormat? androidOutputFormat;
 }

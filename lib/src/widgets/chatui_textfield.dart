@@ -26,6 +26,8 @@ import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:chatview/src/utils/constants/constants.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:gallery_picker/gallery_picker.dart';
+import 'package:gallery_picker/models/media_file.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../chatview.dart';
@@ -59,7 +61,8 @@ class ChatUITextField extends StatefulWidget {
   final Function(String?) onRecordingComplete;
 
   /// Provides callback when user select images from camera/gallery.
-  final StringsCallBack onImageSelected;
+  final void Function(String emoji, String messageId, MessageType messageType)
+      onImageSelected;
 
   @override
   State<ChatUITextField> createState() => _ChatUITextFieldState();
@@ -286,12 +289,40 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
       "Voice messages are only supported with android and ios platform",
     );
     if (!isRecording.value) {
-      await controller?.record();
+      await controller?.record(
+        sampleRate: voiceRecordingConfig?.sampleRate,
+        bitRate: voiceRecordingConfig?.bitRate,
+        androidEncoder: voiceRecordingConfig?.androidEncoder,
+        iosEncoder: voiceRecordingConfig?.iosEncoder,
+        androidOutputFormat: voiceRecordingConfig?.androidOutputFormat,
+      );
       isRecording.value = true;
     } else {
       final path = await controller?.stop();
       isRecording.value = false;
       widget.onRecordingComplete(path);
+    }
+  }
+
+  void _onGalleryPressed(BuildContext context) async {
+    try {
+      List<MediaFile>? mediaList =
+          await GalleryPicker.pickMedia(context: context);
+
+      if (mediaList != null) {
+        for (var i = 0; i < mediaList.length; i++) {
+          var media = mediaList[i];
+          if (media.isImage) {
+            widget.onImageSelected(
+                media.file?.path ?? '', '', MessageType.image);
+          } else if (mediaList[i].isVideo) {
+            widget.onImageSelected(
+                media.file?.path ?? '', '', MessageType.video);
+          }
+        }
+      }
+    } catch (e) {
+      widget.onImageSelected('', e.toString(), MessageType.image);
     }
   }
 
@@ -313,9 +344,9 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
         String? updatedImagePath = await config?.onImagePicked!(imagePath);
         if (updatedImagePath != null) imagePath = updatedImagePath;
       }
-      widget.onImageSelected(imagePath ?? '', '');
+      widget.onImageSelected(imagePath ?? '', '', MessageType.image);
     } catch (e) {
-      widget.onImageSelected('', e.toString());
+      widget.onImageSelected('', e.toString(), MessageType.image);
     }
   }
 

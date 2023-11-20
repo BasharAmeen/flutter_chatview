@@ -28,10 +28,11 @@ dependencies:
   any_link_preview: ^3.0.0
   progress_indicators: ^1.0.0
   image_picker: '>=0.8.9 <2.0.0'
-  audio_waveforms: ^1.0.1
+  audio_waveforms: ^1.0.4
   # For formatting time locale in message receipts
   timeago: ^3.4.0
-
+  gallery_picker: ^0.4.8
+  appinio_video_player: ^1.2.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

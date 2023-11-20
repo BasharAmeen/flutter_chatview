@@ -89,6 +89,7 @@ extension ValidateString on String {
 /// Extension on MessageType for checking specific message type
 extension MessageTypes on MessageType {
   bool get isImage => this == MessageType.image;
+  bool get isVideo => this == MessageType.video;
 
   bool get isText => this == MessageType.text;
 

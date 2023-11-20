@@ -21,6 +21,7 @@
  */
 import 'package:chatview/chatview.dart';
 import 'package:chatview/src/widgets/chat_view_inherited_widget.dart';
+import 'package:chatview/src/widgets/video_player_widget.dart';
 import 'package:flutter/material.dart';
 
 import 'package:chatview/src/extensions/extensions.dart';
@@ -207,6 +208,15 @@ class _MessageViewState extends State<MessageView>
                     messageReactionConfig: messageConfig?.messageReactionConfig,
                     highlightImage: widget.shouldHighlight,
                     highlightScale: widget.highlightScale,
+                  );
+                }
+                // Adding video viewer for video type
+                else if (widget.message.messageType.isVideo) {
+                  return VideoPlayerWidget(
+                    message: widget.message,
+                    isMessageBySender: widget.isMessageBySender,
+                    videoMessageConfiguration:
+                        messageConfig?.videoMessageConfiguration,
                   );
                 } else if (widget.message.messageType.isText) {
                   return TextMessageView(

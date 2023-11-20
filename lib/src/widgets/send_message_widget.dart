@@ -288,10 +288,11 @@ class SendMessageWidgetState extends State<SendMessageWidget> {
     }
   }
 
-  void _onImageSelected(String imagePath, String error) {
+  void _onImageSelected(
+      String imagePath, String error, MessageType messageType) {
     debugPrint('Call in Send Message Widget');
     if (imagePath.isNotEmpty) {
-      widget.onSendTap.call(imagePath, replyMessage, MessageType.image);
+      widget.onSendTap.call(imagePath, replyMessage, messageType);
       _assignRepliedMessage();
     }
   }
