@@ -7,7 +7,7 @@ import 'package:chatview/src/models/video_message_configuration.dart';
 import 'package:flutter/material.dart';
 
 class VideoPlayerWidget extends StatefulWidget {
-  VideoPlayerWidget(
+  const VideoPlayerWidget(
       {super.key,
       required this.message,
       required this.isMessageBySender,
@@ -16,14 +16,15 @@ class VideoPlayerWidget extends StatefulWidget {
   final Message message;
   final bool isMessageBySender;
   final VideoMessageConfiguration? videoMessageConfiguration;
-  late final VideoPlayerController videoPlayerController;
-  late final CustomVideoPlayerController _customVideoPlayerController;
 
   @override
   State<VideoPlayerWidget> createState() => _VideoPlayerWidgetState();
 }
 
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
+  late VideoPlayerController videoPlayerController;
+  late CustomVideoPlayerController _customVideoPlayerController;
+
   @override
   void initState() {
     String urlOrPath = widget.message.message;
@@ -32,26 +33,26 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
     super.initState();
     if (isUrl) {
-      widget.videoPlayerController =
+      videoPlayerController =
           VideoPlayerController.networkUrl(Uri.parse(urlOrPath))
             ..initialize().then((value) => setState(() {}));
-      widget._customVideoPlayerController = CustomVideoPlayerController(
+      _customVideoPlayerController = CustomVideoPlayerController(
           context: context,
-          videoPlayerController: widget.videoPlayerController,
+          videoPlayerController: videoPlayerController,
           customVideoPlayerSettings: CustomVideoPlayerSettings());
     } else {
-      widget.videoPlayerController = VideoPlayerController.file(File(urlOrPath))
+      videoPlayerController = VideoPlayerController.file(File(urlOrPath))
         ..initialize().then((value) => setState(() {}));
-      widget._customVideoPlayerController = CustomVideoPlayerController(
+      _customVideoPlayerController = CustomVideoPlayerController(
         context: context,
-        videoPlayerController: widget.videoPlayerController,
+        videoPlayerController: videoPlayerController,
       );
     }
   }
 
   @override
   void dispose() {
-    widget._customVideoPlayerController.dispose();
+    _customVideoPlayerController.dispose();
     super.dispose();
   }
 
@@ -67,7 +68,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
           height: widget.videoMessageConfiguration?.height ?? 200,
           width: widget.videoMessageConfiguration?.width ?? 250,
           child: CustomVideoPlayer(
-            customVideoPlayerController: widget._customVideoPlayerController,
+            customVideoPlayerController: _customVideoPlayerController,
           ),
         ),
       ],
