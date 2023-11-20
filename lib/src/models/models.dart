@@ -41,3 +41,5 @@ export 'chat_view_states_configuration.dart';
 export 'reaction.dart';
 export 'replied_msg_auto_scroll_config.dart';
 export 'feature_active_config.dart';
+export 'voice_message_configuration.dart';
+export 'video_message_configuration.dart';
