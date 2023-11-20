@@ -26,9 +26,9 @@ import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:chatview/src/utils/constants/constants.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:gallery_picker/gallery_picker.dart';
-import 'package:gallery_picker/models/media_file.dart';
+
 import 'package:image_picker/image_picker.dart';
+import 'package:media_picker_widget/media_picker_widget.dart';
 
 import '../../chatview.dart';
 import '../utils/debounce.dart';
@@ -300,18 +300,66 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
     }
   }
 
+  Future<List<Media>> openImagePicker(BuildContext context) async {
+    List<Media> mediaList = [];
+    await showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return MediaPicker(
+          mediaList: mediaList,
+          onPicked: (selectedList) {
+            setState(() => mediaList = selectedList);
+            Navigator.pop(context);
+          },
+          onCancel: () {
+            mediaList.clear();
+            Navigator.pop(context);
+          },
+          mediaCount: MediaCount.multiple,
+          mediaType: MediaType.all,
+          decoration: PickerDecoration(
+            completeText: "إرسال",
+            blurStrength: 0,
+            scaleAmount: 1,
+            counterBuilder: (context, index) {
+              if (index == null) return const SizedBox();
+              return Align(
+                alignment: Alignment.topRight,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.all(4),
+                  child: Text(
+                    '$index',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+
+    return mediaList;
+  }
+
   void _onGalleryPressed(BuildContext context) async {
     try {
-      List<MediaFile>? mediaList =
-          await GalleryPicker.pickMedia(context: context);
+      List<Media> mediaList = await openImagePicker(context);
 
-      if (mediaList != null) {
+      if (mediaList.isNotEmpty) {
         for (var i = 0; i < mediaList.length; i++) {
           var media = mediaList[i];
-          if (media.isImage) {
+          if (media.mediaType == MediaType.image) {
             widget.onImageSelected(
                 media.file?.path ?? '', '', MessageType.image);
-          } else if (mediaList[i].isVideo) {
+          } else if (media.mediaType == MediaType.video) {
             widget.onImageSelected(
                 media.file?.path ?? '', '', MessageType.video);
           }
