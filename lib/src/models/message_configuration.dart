@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 import 'package:chatview/src/models/models.dart';
-import 'package:chatview/src/models/video_message.dart';
+import 'package:chatview/src/models/video_message_configuration.dart';
 import 'package:chatview/src/models/voice_message_configuration.dart';
 import 'package:flutter/material.dart';
 
