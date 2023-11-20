@@ -243,11 +243,7 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
                               true)
                             IconButton(
                               constraints: const BoxConstraints(),
-                              onPressed: () => _onIconPressed(
-                                ImageSource.gallery,
-                                config:
-                                    sendMessageConfig?.imagePickerConfiguration,
-                              ),
+                              onPressed: () => _onGalleryPressed(context),
                               icon: imagePickerIconsConfig
                                       ?.galleryImagePickerIcon ??
                                   Icon(

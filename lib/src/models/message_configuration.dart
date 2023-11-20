@@ -40,6 +40,7 @@ class MessageConfiguration {
 
   /// Configurations for voice message bubble
   final VoiceMessageConfiguration? voiceMessageConfig;
+  final VoiceRecordingConfiguration? voiceRecordingConfiguration;
 
   const MessageConfiguration({
     this.imageMessageConfig,
@@ -47,6 +48,7 @@ class MessageConfiguration {
     this.emojiMessageConfig,
     this.customMessageBuilder,
     this.voiceMessageConfig,
+    this.voiceRecordingConfiguration,
     this.videoMessageConfiguration,
   });
 }
