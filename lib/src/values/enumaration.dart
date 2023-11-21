@@ -53,3 +53,39 @@ extension ChatViewStateExtension on ChatViewState {
 
   bool get noMessages => this == ChatViewState.noData;
 }
+
+extension MessageTypeExtension on MessageType {
+  String get valueAsString {
+    switch (this) {
+      case MessageType.image:
+        return 'image';
+      case MessageType.text:
+        return 'text';
+      case MessageType.video:
+        return 'video';
+      case MessageType.voice:
+        return 'voice';
+      case MessageType.custom:
+        return 'custom';
+      default:
+        throw Exception('Invalid MessageType value: $this');
+    }
+  }
+
+  static MessageType fromValueAsString(String value) {
+    switch (value) {
+      case 'image':
+        return MessageType.image;
+      case 'text':
+        return MessageType.text;
+      case 'video':
+        return MessageType.video;
+      case 'voice':
+        return MessageType.voice;
+      case 'custom':
+        return MessageType.custom;
+      default:
+        throw Exception('Invalid MessageType string value: $value');
+    }
+  }
+}
