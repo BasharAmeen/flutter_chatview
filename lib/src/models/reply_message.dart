@@ -51,7 +51,8 @@ class ReplyMessage {
         message: json['message'],
         replyBy: json['replyBy'],
         replyTo: json['replyTo'],
-        messageType: json["message_type"],
+        messageType:
+            MessageTypeExtension.fromValueAsString(json["message_type"]),
         messageId: json["id"],
         voiceMessageDuration: json["voiceMessageDuration"],
       );
@@ -60,7 +61,7 @@ class ReplyMessage {
         'message': message,
         'replyBy': replyBy,
         'replyTo': replyTo,
-        'message_type': messageType,
+        'message_type': messageType.valueAsString,
         'id': messageId,
         'voiceMessageDuration': voiceMessageDuration,
       };
