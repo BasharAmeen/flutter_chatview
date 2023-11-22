@@ -5,7 +5,9 @@ class Reaction {
   });
 
   factory Reaction.fromJson(Map<String, dynamic> json) => Reaction(
-        reactions: json['reactions'],
+        reactions: (json['reactions'] as List<dynamic>)
+            .map((e) => e as String)
+            .toList(),
         reactedUserIds: json['reactedUserIds'],
       );
 
