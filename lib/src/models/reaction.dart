@@ -8,7 +8,9 @@ class Reaction {
         reactions: (json['reactions'] as List<dynamic>)
             .map((e) => e as String)
             .toList(),
-        reactedUserIds: json['reactedUserIds'],
+        reactedUserIds: (json['reactedUserIds'] as List<dynamic>)
+            .map((e) => e as String)
+            .toList(),
       );
 
   /// Provides list of reaction in single message.
