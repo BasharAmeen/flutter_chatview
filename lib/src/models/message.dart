@@ -93,7 +93,7 @@ class Message {
   factory Message.fromJson(Map<String, dynamic> json) => Message(
       id: json["id"],
       message: json["message"],
-      createdAt: DateTime.parse(json["createdAt"] as String),
+      createdAt: (json["createdAt"]).toDate(),
       sendBy: json["sendBy"],
       replyMessage: ReplyMessage.fromJson(json["reply_message"]),
       reaction: Reaction.fromJson(json["reaction"]),
