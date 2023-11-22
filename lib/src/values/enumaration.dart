@@ -39,6 +39,24 @@ enum TypeWriterStatus { typing, typed }
 /// if you are sender sending a message then, the
 enum MessageStatus { read, delivered, undelivered, pending }
 
+extension MessageStatusExtension on MessageStatus {
+  static MessageStatus fromValueAsString(String value) {
+    switch (value) {
+      case 'read':
+        return MessageStatus.read;
+      case 'delivered':
+        return MessageStatus.delivered;
+      case 'undelivered':
+        return MessageStatus.undelivered;
+      case 'pending':
+        return MessageStatus.pending;
+
+      default:
+        throw Exception('Invalid MessageType string value: $value');
+    }
+  }
+}
+
 /// Types of states
 enum ChatViewState { hasMessages, noData, loading, error }
 

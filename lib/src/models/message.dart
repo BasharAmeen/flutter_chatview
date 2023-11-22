@@ -99,7 +99,7 @@ class Message {
       reaction: Reaction.fromJson(json["reaction"]),
       messageType: MessageTypeExtension.fromValueAsString(json["message_type"]),
       voiceMessageDuration: json["voice_message_duration"],
-      status: json['status']);
+      status: MessageStatusExtension.fromValueAsString(json['status']));
 
   Map<String, dynamic> toJson() => {
         'id': id,
