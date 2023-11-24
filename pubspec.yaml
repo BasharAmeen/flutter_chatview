@@ -32,7 +32,10 @@ dependencies:
   # For formatting time locale in message receipts
   timeago: ^3.4.0
   appinio_video_player: ^1.2.2
-  media_picker_widget: ^1.0.5
+  media_picker_widget:
+   git:
+    url: https://github.com/BasharAmeen/media_picker_widget
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
