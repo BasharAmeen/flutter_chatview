@@ -39,7 +39,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       _customVideoPlayerController = CustomVideoPlayerController(
           context: context,
           videoPlayerController: videoPlayerController,
-          customVideoPlayerSettings: CustomVideoPlayerSettings());
+          customVideoPlayerSettings: const CustomVideoPlayerSettings());
     } else {
       videoPlayerController = VideoPlayerController.file(File(urlOrPath))
         ..initialize().then((value) => setState(() {}));
