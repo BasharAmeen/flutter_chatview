@@ -22,7 +22,7 @@ class VideoPlayerWidget extends StatefulWidget {
 }
 
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
-  late CachedVideoPlayerController videoPlayerController;
+  late VideoPlayerController videoPlayerController;
   late CustomVideoPlayerController _customVideoPlayerController;
 
   @override
@@ -33,14 +33,15 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
     super.initState();
     if (isUrl) {
-      videoPlayerController = CachedVideoPlayerController.network(urlOrPath)
-        ..initialize().then((value) => setState(() {}));
+      videoPlayerController =
+          VideoPlayerController.networkUrl(Uri.parse(urlOrPath))
+            ..initialize().then((value) => setState(() {}));
       _customVideoPlayerController = CustomVideoPlayerController(
           context: context,
           videoPlayerController: videoPlayerController,
           customVideoPlayerSettings: const CustomVideoPlayerSettings());
     } else {
-      videoPlayerController = CachedVideoPlayerController.file(File(urlOrPath))
+      videoPlayerController = VideoPlayerController.file(File(urlOrPath))
         ..initialize().then((value) => setState(() {}));
       _customVideoPlayerController = CustomVideoPlayerController(
         context: context,
