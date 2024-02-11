@@ -55,7 +55,6 @@ class ChatView extends StatefulWidget {
     required this.chatViewState,
     ChatViewStateConfiguration? chatViewStateConfig,
     this.featureActiveConfig = const FeatureActiveConfig(),
-    required this.customVideoPlayerSettings,
   })  : chatBackgroundConfig =
             chatBackgroundConfig ?? const ChatBackgroundConfiguration(),
         chatViewStateConfig =
@@ -137,7 +136,6 @@ class ChatView extends StatefulWidget {
 
   /// Provides callback when user tap on chat list.
   final VoidCallBack? onChatListTap;
-  final CustomVideoPlayerSettings customVideoPlayerSettings;
   @override
   State<ChatView> createState() => _ChatViewState();
 }
