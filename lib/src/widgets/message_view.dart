@@ -217,6 +217,8 @@ class _MessageViewState extends State<MessageView>
                     isMessageBySender: widget.isMessageBySender,
                     videoMessageConfiguration:
                         messageConfig?.videoMessageConfiguration,
+                    customVideoPlayerSettings:
+                        messageConfig!.customVideoPlayerSettings,
                   );
                 } else if (widget.message.messageType.isText) {
                   return TextMessageView(

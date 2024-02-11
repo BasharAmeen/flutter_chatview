@@ -3,20 +3,21 @@ import 'dart:io';
 import 'package:appinio_video_player/appinio_video_player.dart';
 import 'package:chatview/chatview.dart';
 import 'package:chatview/src/extensions/extensions.dart';
-import 'package:chatview/src/models/video_message_configuration.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class VideoPlayerWidget extends StatefulWidget {
   const VideoPlayerWidget(
       {super.key,
       required this.message,
       required this.isMessageBySender,
-      this.videoMessageConfiguration});
+      this.videoMessageConfiguration,
+      required this.customVideoPlayerSettings});
 
   final Message message;
   final bool isMessageBySender;
   final VideoMessageConfiguration? videoMessageConfiguration;
-
+  final CustomVideoPlayerSettings customVideoPlayerSettings;
   @override
   State<VideoPlayerWidget> createState() => _VideoPlayerWidgetState();
 }
@@ -38,20 +39,14 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       _customVideoPlayerController = CustomVideoPlayerController(
           context: context,
           videoPlayerController: videoPlayerController,
-          customVideoPlayerSettings: const CustomVideoPlayerSettings(
-            enterFullscreenOnStart: false,
-            exitFullscreenOnEnd: true,
-          ));
+          customVideoPlayerSettings: widget.customVideoPlayerSettings);
     } else {
       videoPlayerController = CachedVideoPlayerController.file(File(urlOrPath))
         ..initialize().then((value) => setState(() {}));
       _customVideoPlayerController = CustomVideoPlayerController(
         context: context,
         videoPlayerController: videoPlayerController,
-        customVideoPlayerSettings: const CustomVideoPlayerSettings(
-          enterFullscreenOnStart: false,
-          exitFullscreenOnEnd: true,
-        ),
+        customVideoPlayerSettings: widget.customVideoPlayerSettings,
       );
     }
   }

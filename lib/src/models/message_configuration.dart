@@ -19,6 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+import 'package:appinio_video_player/appinio_video_player.dart';
 import 'package:chatview/src/models/models.dart';
 import 'package:chatview/src/models/video_message_configuration.dart';
 import 'package:chatview/src/models/voice_message_configuration.dart';
@@ -41,8 +42,9 @@ class MessageConfiguration {
   /// Configurations for voice message bubble
   final VoiceMessageConfiguration? voiceMessageConfig;
   final VoiceRecordingConfiguration? voiceRecordingConfiguration;
-
-  const MessageConfiguration({
+  final CustomVideoPlayerSettings customVideoPlayerSettings;
+  const MessageConfiguration(
+    this.customVideoPlayerSettings, {
     this.imageMessageConfig,
     this.messageReactionConfig,
     this.emojiMessageConfig,

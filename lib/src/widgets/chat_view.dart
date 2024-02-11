@@ -19,6 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+import 'package:appinio_video_player/appinio_video_player.dart';
 import 'package:chatview/chatview.dart';
 import 'package:chatview/src/widgets/chat_list_widget.dart';
 import 'package:chatview/src/widgets/chat_view_inherited_widget.dart';
@@ -30,7 +31,7 @@ import 'send_message_widget.dart';
 
 class ChatView extends StatefulWidget {
   const ChatView({
-    Key? key,
+    super.key,
     required this.chatController,
     required this.currentUser,
     this.onSendTap,
@@ -54,11 +55,11 @@ class ChatView extends StatefulWidget {
     required this.chatViewState,
     ChatViewStateConfiguration? chatViewStateConfig,
     this.featureActiveConfig = const FeatureActiveConfig(),
+    required this.customVideoPlayerSettings,
   })  : chatBackgroundConfig =
             chatBackgroundConfig ?? const ChatBackgroundConfiguration(),
         chatViewStateConfig =
-            chatViewStateConfig ?? const ChatViewStateConfiguration(),
-        super(key: key);
+            chatViewStateConfig ?? const ChatViewStateConfiguration();
 
   /// Provides configuration related to user profile circle avatar.
   final ProfileCircleConfiguration? profileCircleConfig;
@@ -136,7 +137,7 @@ class ChatView extends StatefulWidget {
 
   /// Provides callback when user tap on chat list.
   final VoidCallBack? onChatListTap;
-
+  final CustomVideoPlayerSettings customVideoPlayerSettings;
   @override
   State<ChatView> createState() => _ChatViewState();
 }
