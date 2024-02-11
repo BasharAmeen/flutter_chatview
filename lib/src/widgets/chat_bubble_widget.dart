@@ -260,8 +260,8 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
               true) {
             return widget.chatBubbleConfig?.outgoingChatBubbleConfig
                     ?.receiptsWidgetConfig?.receiptsBuilder
-                    ?.call(value) ??
-                sendMessageAnimationBuilder(value);
+                    ?.call(value as MessageStatus) ??
+                sendMessageAnimationBuilder(value as MessageStatus);
           }
           return const SizedBox();
         },
@@ -277,10 +277,10 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                 true) {
               return widget.chatBubbleConfig?.outgoingChatBubbleConfig
                       ?.receiptsWidgetConfig?.receiptsBuilder
-                      ?.call(value) ??
-                  sendMessageAnimationBuilder(value);
+                      ?.call(value as MessageStatus) ??
+                  sendMessageAnimationBuilder(value as MessageStatus);
             }
-            return sendMessageAnimationBuilder(value);
+            return sendMessageAnimationBuilder(value as MessageStatus);
           });
     }
     return const SizedBox();

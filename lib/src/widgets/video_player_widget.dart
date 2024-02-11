@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:appinio_video_player/appinio_video_player.dart';
 import 'package:chatview/chatview.dart';
 import 'package:chatview/src/extensions/extensions.dart';
 import 'package:chatview/src/models/video_message_configuration.dart';
@@ -21,8 +22,8 @@ class VideoPlayerWidget extends StatefulWidget {
 }
 
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
-  // late VideoPlayerController videoPlayerController;
-  // late CustomVideoPlayerController _customVideoPlayerController;
+  late CachedVideoPlayerController videoPlayerController;
+  late CustomVideoPlayerController _customVideoPlayerController;
 
   @override
   void initState() {
@@ -31,45 +32,51 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     bool isUrl = urlOrPath.isUrl;
 
     super.initState();
-    // if (isUrl) {
-    //   videoPlayerController =
-    //       VideoPlayerController.networkUrl(Uri.parse(urlOrPath))
-    //         ..initialize().then((value) => setState(() {}));
-    //   _customVideoPlayerController = CustomVideoPlayerController(
-    //       context: context,
-    //       videoPlayerController: videoPlayerController,
-    //       customVideoPlayerSettings: const CustomVideoPlayerSettings());
-    // } else {
-    //   videoPlayerController = VideoPlayerController.file(File(urlOrPath))
-    //     ..initialize().then((value) => setState(() {}));
-    //   _customVideoPlayerController = CustomVideoPlayerController(
-    //     context: context,
-    //     videoPlayerController: videoPlayerController,
-    //   );
-    // }
+    if (isUrl) {
+      videoPlayerController = CachedVideoPlayerController.network(urlOrPath)
+        ..initialize().then((value) => setState(() {}));
+      _customVideoPlayerController = CustomVideoPlayerController(
+          context: context,
+          videoPlayerController: videoPlayerController,
+          customVideoPlayerSettings: const CustomVideoPlayerSettings(
+            enterFullscreenOnStart: false,
+            exitFullscreenOnEnd: true,
+          ));
+    } else {
+      videoPlayerController = CachedVideoPlayerController.file(File(urlOrPath))
+        ..initialize().then((value) => setState(() {}));
+      _customVideoPlayerController = CustomVideoPlayerController(
+        context: context,
+        videoPlayerController: videoPlayerController,
+        customVideoPlayerSettings: const CustomVideoPlayerSettings(
+          enterFullscreenOnStart: false,
+          exitFullscreenOnEnd: true,
+        ),
+      );
+    }
   }
 
   @override
   void dispose() {
-    // _customVideoPlayerController.dispose();
-    // super.dispose();
+    _customVideoPlayerController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
-      // mainAxisAlignment: widget.isMessageBySender
-      // ? MainAxisAlignment.end
-      // : MainAxisAlignment.start,
+      mainAxisAlignment: widget.isMessageBySender
+          ? MainAxisAlignment.end
+          : MainAxisAlignment.start,
       children: [
-        // SizedBox(
-        //   height: widget.videoMessageConfiguration?.height ?? 200,
-        //   width: widget.videoMessageConfiguration?.width ?? 250,
-        //   child: CustomVideoPlayer(
-        //     customVideoPlayerController: _customVideoPlayerController,
-        //   ),
-        // ),
+        SizedBox(
+          height: widget.videoMessageConfiguration?.height ?? 200,
+          width: widget.videoMessageConfiguration?.width ?? 250,
+          child: CustomVideoPlayer(
+            customVideoPlayerController: _customVideoPlayerController,
+          ),
+        ),
       ],
     );
   }
