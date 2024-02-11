@@ -258,13 +258,33 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
                                 Platform.isIOS &&
                                 Platform.isAndroid &&
                                 !kIsWeb)
-                          IconButton(
-                            onPressed: _recordOrStop,
-                            icon: (isRecordingValue
-                                    ? voiceRecordingConfig?.micIcon
-                                    : voiceRecordingConfig?.stopIcon) ??
-                                Icon(isRecordingValue ? Icons.stop : Icons.mic),
-                            color: voiceRecordingConfig?.recorderIconColor,
+
+                          // on recording voice icons
+                          Row(
+                            children: [
+                              if (isRecordingValue)
+                                IconButton(
+                                    onPressed: () {
+                                      // stop recording
+                                      controller?.stop();
+                                      isRecording.value = false;
+                                      setState(() {});
+                                    },
+                                    icon: const Icon(
+                                      Icons.delete_outlined,
+                                      color: Colors.red,
+                                    )),
+                              IconButton(
+                                onPressed: _recordOrStop,
+                                icon: (isRecordingValue
+                                        ? voiceRecordingConfig?.micIcon
+                                        : voiceRecordingConfig?.stopIcon) ??
+                                    Icon(isRecordingValue
+                                        ? Icons.stop
+                                        : Icons.mic),
+                                color: voiceRecordingConfig?.recorderIconColor,
+                              ),
+                            ],
                           )
                       ],
                     );
