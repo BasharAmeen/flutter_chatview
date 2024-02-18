@@ -262,7 +262,6 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
 
                           // on recording voice icons
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               if (isRecordingValue)
                                 InkWell(
@@ -284,7 +283,7 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
                                     ),
                                   ),
                                 ),
-                              const SizedBox(width: 19),
+                              const SizedBox(width: 15),
                               InkWell(
                                 onTap: _recordOrStop,
                                 child: isRecordingValue
