@@ -264,25 +264,22 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
                           Row(
                             children: [
                               if (isRecordingValue)
-                                Expanded(
-                                  flex: 1,
-                                  child: InkWell(
-                                    onTap: () {
-                                      // stop recording
-                                      controller?.stop();
-                                      isRecording.value = false;
-                                      setState(() {});
-                                    },
-                                    child: Text(
-                                      context.locale.languageCode == 'en'
-                                          ? 'cancel'
-                                          : 'إلغاء',
-                                      style: const TextStyle(
-                                        color: Colors.red,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'cairo',
-                                      ),
+                                InkWell(
+                                  onTap: () {
+                                    // stop recording
+                                    controller?.stop();
+                                    isRecording.value = false;
+                                    setState(() {});
+                                  },
+                                  child: Text(
+                                    context.locale.languageCode == 'en'
+                                        ? 'cancel'
+                                        : 'إلغاء',
+                                    style: const TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'cairo',
                                     ),
                                   ),
                                 ),
