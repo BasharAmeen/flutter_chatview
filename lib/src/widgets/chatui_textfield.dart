@@ -283,7 +283,7 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
                                     ),
                                   ),
                                 ),
-                              if (isRecordingValue) const SizedBox(width: 15),
+                              if (isRecordingValue) const SizedBox(width:23),
                               InkWell(
                                 onTap: _recordOrStop,
                                 child: isRecordingValue
