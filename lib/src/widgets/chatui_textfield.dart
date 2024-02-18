@@ -283,7 +283,7 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
                                     ),
                                   ),
                                 ),
-                              if (isRecordingValue) const SizedBox(width: 18),
+                              if (isRecordingValue) const SizedBox(width: 24),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
