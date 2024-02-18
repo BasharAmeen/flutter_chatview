@@ -264,26 +264,29 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
                           Row(
                             children: [
                               if (isRecordingValue)
-                                InkWell(
-                                  onTap: () {
-                                    // stop recording
-                                    controller?.stop();
-                                    isRecording.value = false;
-                                    setState(() {});
-                                  },
-                                  child: Text(
-                                    context.locale.languageCode == 'en'
-                                        ? 'cancel'
-                                        : 'إلغاء',
-                                    style: const TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'cairo',
+                                Expanded(
+                                  flex: 1,
+                                  child: InkWell(
+                                    onTap: () {
+                                      // stop recording
+                                      controller?.stop();
+                                      isRecording.value = false;
+                                      setState(() {});
+                                    },
+                                    child: Text(
+                                      context.locale.languageCode == 'en'
+                                          ? 'cancel'
+                                          : 'إلغاء',
+                                      style: const TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'cairo',
+                                      ),
                                     ),
                                   ),
                                 ),
-                              if (isRecordingValue) const SizedBox(width: 24),
+                              if (isRecordingValue) const SizedBox(width: 28),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
