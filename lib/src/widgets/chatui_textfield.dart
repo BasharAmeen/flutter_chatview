@@ -284,33 +284,38 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
                                   ),
                                 ),
                               if (isRecordingValue) const SizedBox(width: 18),
-                              InkWell(
-                                onTap: _recordOrStop,
-                                child: isRecordingValue
-                                    ? Text(
-                                        context.locale.languageCode == 'en'
-                                            ? "send"
-                                            : "إرسال",
-                                        style: TextStyle(
-                                          color: sendMessageConfig
-                                                  ?.voiceRecordingConfiguration
-                                                  ?.recorderIconColor ??
-                                              Colors.black,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: 'cairo',
-                                        ),
-                                      )
-                                    : sendMessageConfig
-                                            ?.voiceRecordingConfiguration!
-                                            .micIcon ??
-                                        Icon(
-                                          Icons.mic,
-                                          color: sendMessageConfig
-                                                  ?.voiceRecordingConfiguration
-                                                  ?.recorderIconColor ??
-                                              Colors.black,
-                                        ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  InkWell(
+                                    onTap: _recordOrStop,
+                                    child: isRecordingValue
+                                        ? Text(
+                                            context.locale.languageCode == 'en'
+                                                ? "send"
+                                                : "إرسال",
+                                            style: TextStyle(
+                                              color: sendMessageConfig
+                                                      ?.voiceRecordingConfiguration
+                                                      ?.recorderIconColor ??
+                                                  Colors.black,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              fontFamily: 'cairo',
+                                            ),
+                                          )
+                                        : sendMessageConfig
+                                                ?.voiceRecordingConfiguration!
+                                                .micIcon ??
+                                            Icon(
+                                              Icons.mic,
+                                              color: sendMessageConfig
+                                                      ?.voiceRecordingConfiguration
+                                                      ?.recorderIconColor ??
+                                                  Colors.black,
+                                            ),
+                                  ),
+                                ],
                               ),
                             ],
                           )
