@@ -374,7 +374,7 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
             Navigator.pop(context);
           },
           mediaCount: MediaCount.multiple,
-          mediaType: MediaType.all,
+          mediaType: MediaType.image,
           decoration: PickerDecoration(
             completeText: "إرسال",
             blurStrength: 0,
