@@ -70,7 +70,6 @@ class SendMessageConfiguration {
 
   /// Styling configuration for recorder widget.
   final VoiceRecordingConfiguration? voiceRecordingConfiguration;
-
   const SendMessageConfiguration({
     this.textFieldConfig,
     this.textFieldBackgroundColor,
@@ -241,6 +240,7 @@ class ImagePickerConfiguration {
 
 class VoiceRecordingConfiguration {
   const VoiceRecordingConfiguration({
+    required this.spaceBetweenButtons,
     this.waveStyle,
     this.padding,
     this.margin,
@@ -255,6 +255,7 @@ class VoiceRecordingConfiguration {
     this.iosEncoder,
     this.androidOutputFormat,
   });
+  final double spaceBetweenButtons;
 
   /// Applies styles to waveform.
   final WaveStyle? waveStyle;
