@@ -283,6 +283,7 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
                                     ),
                                   ),
                                 ),
+                              if (isRecordingValue) const SizedBox(width: 15),
                               InkWell(
                                 onTap: _recordOrStop,
                                 child: isRecordingValue
@@ -290,8 +291,11 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
                                         context.locale.languageCode == 'en'
                                             ? "send"
                                             : "إرسال",
-                                        style: const TextStyle(
-                                          color: Colors.green,
+                                        style: TextStyle(
+                                          color: sendMessageConfig
+                                                  ?.voiceRecordingConfiguration
+                                                  ?.recorderIconColor ??
+                                              Colors.black,
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
                                           fontFamily: 'cairo',
@@ -300,9 +304,12 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
                                     : sendMessageConfig
                                             ?.voiceRecordingConfiguration!
                                             .micIcon ??
-                                        const Icon(
+                                        Icon(
                                           Icons.mic,
-                                          color: Colors.green,
+                                          color: sendMessageConfig
+                                                  ?.voiceRecordingConfiguration
+                                                  ?.recorderIconColor ??
+                                              Colors.black,
                                         ),
                               ),
                             ],
