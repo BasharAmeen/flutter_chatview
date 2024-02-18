@@ -37,6 +37,7 @@ dependencies:
    git:
     url: https://github.com/BasharAmeen/media_picker_widget
   firebase_cached_image: ^0.5.2
+  easy_localization: ^3.0.2
 
 dev_dependencies:
   flutter_test:

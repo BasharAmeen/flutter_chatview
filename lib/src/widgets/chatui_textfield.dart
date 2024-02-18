@@ -24,6 +24,7 @@ import 'dart:io' show Platform;
 
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:chatview/src/utils/constants/constants.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -263,26 +264,46 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
                           Row(
                             children: [
                               if (isRecordingValue)
-                                IconButton(
-                                    onPressed: () {
-                                      // stop recording
-                                      controller?.stop();
-                                      isRecording.value = false;
-                                      setState(() {});
-                                    },
-                                    icon: const Icon(
-                                      Icons.delete_outlined,
+                                InkWell(
+                                  onTap: () {
+                                    // stop recording
+                                    controller?.stop();
+                                    isRecording.value = false;
+                                    setState(() {});
+                                  },
+                                  child: Text(
+                                    context.locale.languageCode == 'en'
+                                        ? 'Cancel'
+                                        : 'إلغاء',
+                                    style: const TextStyle(
                                       color: Colors.red,
-                                    )),
-                              IconButton(
-                                onPressed: _recordOrStop,
-                                icon: (isRecordingValue
-                                        ? voiceRecordingConfig?.micIcon
-                                        : voiceRecordingConfig?.stopIcon) ??
-                                    Icon(isRecordingValue
-                                        ? Icons.stop
-                                        : Icons.mic),
-                                color: voiceRecordingConfig?.recorderIconColor,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'cairo',
+                                    ),
+                                  ),
+                                ),
+                              InkWell(
+                                onTap: _recordOrStop,
+                                child: isRecordingValue
+                                    ? Text(
+                                        context.locale.languageCode == 'en'
+                                            ? "send"
+                                            : "إرسال",
+                                        style: const TextStyle(
+                                          color: Colors.green,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'cairo',
+                                        ),
+                                      )
+                                    : sendMessageConfig
+                                            ?.voiceRecordingConfiguration!
+                                            .micIcon ??
+                                        const Icon(
+                                          Icons.mic,
+                                          color: Colors.green,
+                                        ),
                               ),
                             ],
                           )
