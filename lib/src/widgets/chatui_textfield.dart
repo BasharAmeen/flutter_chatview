@@ -148,7 +148,7 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
             children: [
               if (isRecordingValue && controller != null && !kIsWeb)
                 AudioWaveforms(
-                  size: Size(MediaQuery.of(context).size.width * 0.60, 50),
+                  size: Size(MediaQuery.of(context).size.width * 0.53, 50),
                   recorderController: controller!,
                   margin: voiceRecordingConfig?.margin,
                   padding: voiceRecordingConfig?.padding ??
@@ -273,7 +273,7 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
                                   },
                                   child: Text(
                                     context.locale.languageCode == 'en'
-                                        ? 'Cancel'
+                                        ? 'cancel'
                                         : 'إلغاء',
                                     style: const TextStyle(
                                       color: Colors.red,
@@ -283,7 +283,7 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
                                     ),
                                   ),
                                 ),
-                              if (isRecordingValue) const SizedBox(width: 13),
+                              if (isRecordingValue) const SizedBox(width: 18),
                               InkWell(
                                 onTap: _recordOrStop,
                                 child: isRecordingValue
