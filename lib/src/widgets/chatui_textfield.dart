@@ -345,6 +345,9 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
       "Voice messages are only supported with android and ios platform",
     );
     if (!isRecording.value) {
+      // ask for permission
+      final permission = await controller?.checkPermission();
+      if (permission == false) return;
       await controller?.record(
         sampleRate: voiceRecordingConfig?.sampleRate,
         bitRate: voiceRecordingConfig?.bitRate,
