@@ -95,10 +95,12 @@ class MediaPickerConfiguration {
   final String completeText;
   final double blurStrength;
   final double scaleAmount;
+  final bool isMultiImage;
   MediaPickerConfiguration({
     required this.completeText,
     required this.blurStrength,
     required this.scaleAmount,
+    required this.isMultiImage,
   });
 }
 

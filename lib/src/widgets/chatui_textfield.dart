@@ -360,9 +360,11 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
     }
   }
 
-  Future<List<XFile>> openImagePicker(BuildContext context,
+  Future<List<XFile?>> openImagePicker(BuildContext context,
       MediaPickerConfiguration mediaPickerConfiguration) async {
-    List<XFile> images = await ImagePicker().pickMultiImage();
+    List<XFile?> images = (mediaPickerConfiguration.isMultiImage
+        ? await ImagePicker().pickMultiImage()
+        : [await ImagePicker().pickImage(source: ImageSource.gallery)]);
 
     return images;
   }
@@ -370,14 +372,15 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
   Future<void> _onGalleryPressed(BuildContext context,
       MediaPickerConfiguration mediaPickerConfiguration) async {
     try {
-      List<XFile> mediaList =
+      List<XFile?> mediaList =
           await openImagePicker(context, mediaPickerConfiguration);
 
       if (mediaList.isNotEmpty) {
         for (var i = 0; i < mediaList.length; i++) {
+          if (mediaList[i] == null) continue;
           var media = mediaList[i];
 
-          widget.onImageSelected(media.path, '', MessageType.image);
+          widget.onImageSelected(media!.path, '', MessageType.image);
         }
       }
     } catch (e) {
