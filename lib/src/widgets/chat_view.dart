@@ -50,7 +50,7 @@ class ChatView extends StatefulWidget {
     this.typeIndicatorConfig,
     this.sendMessageBuilder,
     this.showTypingIndicator = false,
-    this.sendMessageConfig,
+    required this.sendMessageConfig,
     this.onChatListTap,
     required this.chatViewState,
     ChatViewStateConfiguration? chatViewStateConfig,
@@ -117,7 +117,7 @@ class ChatView extends StatefulWidget {
   final ChatController chatController;
 
   /// Provides configuration of default text field in chat.
-  final SendMessageConfiguration? sendMessageConfig;
+  final SendMessageConfiguration sendMessageConfig;
 
   /// Provides current state of chat.
   final ChatViewState chatViewState;
