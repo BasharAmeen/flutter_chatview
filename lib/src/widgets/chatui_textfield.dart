@@ -244,7 +244,10 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
                               true)
                             IconButton(
                               constraints: const BoxConstraints(),
-                              onPressed: () => _onGalleryPressed(context),
+                              onPressed: () => _onGalleryPressed(
+                                  context,
+                                  widget.sendMessageConfig!
+                                      .mediaPickerConfiguration),
                               icon: imagePickerIconsConfig
                                       ?.galleryImagePickerIcon ??
                                   Icon(
@@ -358,7 +361,8 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
     }
   }
 
-  Future<List<Media>> openImagePicker(BuildContext context) async {
+  Future<List<Media>> openImagePicker(BuildContext context,
+      MediaPickerConfiguration mediaPickerConfiguration) async {
     List<Media> mediaList = [];
     await showModalBottomSheet(
       context: context,
@@ -373,12 +377,12 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
             mediaList.clear();
             Navigator.pop(context);
           },
-          mediaCount: MediaCount.multiple,
-          mediaType: MediaType.image,
+          mediaCount: mediaPickerConfiguration.mediaCount,
+          mediaType: mediaPickerConfiguration.mediaType,
           decoration: PickerDecoration(
-            completeText: "إرسال",
-            blurStrength: 0,
-            scaleAmount: 1,
+            completeText: mediaPickerConfiguration.completeText,
+            blurStrength: mediaPickerConfiguration.blurStrength,
+            scaleAmount: mediaPickerConfiguration.scaleAmount,
             counterBuilder: (context, index) {
               if (index == null) return const SizedBox();
               return Align(
@@ -407,9 +411,11 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
     return mediaList;
   }
 
-  void _onGalleryPressed(BuildContext context) async {
+  void _onGalleryPressed(BuildContext context,
+      MediaPickerConfiguration mediaPickerConfiguration) async {
     try {
-      List<Media> mediaList = await openImagePicker(context);
+      List<Media> mediaList =
+          await openImagePicker(context, mediaPickerConfiguration);
 
       if (mediaList.isNotEmpty) {
         for (var i = 0; i < mediaList.length; i++) {
