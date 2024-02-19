@@ -111,17 +111,12 @@ class ChatController {
 
   /// Function to scroll to last messages in chat view
   void scrollToLastMessage() => Timer(
-        const Duration(milliseconds: 300),
-        () {
- 
-            scrollController.animateTo(
-              scrollController.position.maxScrollExtent,
-              curve: Curves.easeIn,
-              duration: const Duration(milliseconds: 300),
-            );
-     
-        },
-      );
+      const Duration(milliseconds: 300),
+      () => scrollController.animateTo(
+            scrollController.position.minScrollExtent,
+            curve: Curves.easeIn,
+            duration: const Duration(milliseconds: 300),
+          ));
 
   /// Function for loading data while pagination.
   void loadMoreData(List<Message> messageList) {

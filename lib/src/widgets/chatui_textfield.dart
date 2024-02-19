@@ -370,7 +370,8 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
         return MediaPicker(
           mediaList: mediaList,
           onPicked: (selectedList) {
-            setState(() => mediaList = selectedList);
+            mediaList = selectedList;
+
             Navigator.pop(context);
           },
           onCancel: () {
@@ -411,7 +412,7 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
     return mediaList;
   }
 
-  void _onGalleryPressed(BuildContext context,
+  Future<void> _onGalleryPressed(BuildContext context,
       MediaPickerConfiguration mediaPickerConfiguration) async {
     try {
       List<Media> mediaList =
