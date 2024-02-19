@@ -29,6 +29,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../chatview.dart';
 import '../utils/debounce.dart';
@@ -345,9 +346,11 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
       "Voice messages are only supported with android and ios platform",
     );
     if (!isRecording.value) {
-      // ask for permission
-      final permission = await controller?.checkPermission();
-      if (permission == false) return;
+      final status = await Permission.microphone.request();
+      if (status != PermissionStatus.granted) {
+        return;
+      }
+
       await controller?.record(
         sampleRate: voiceRecordingConfig?.sampleRate,
         bitRate: voiceRecordingConfig?.bitRate,
