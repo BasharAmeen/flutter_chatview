@@ -29,7 +29,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:image_picker/image_picker.dart';
-import 'package:media_picker_widget/media_picker_widget.dart';
 
 import '../../chatview.dart';
 import '../utils/debounce.dart';
@@ -361,73 +360,24 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
     }
   }
 
-  Future<List<Media>> openImagePicker(BuildContext context,
+  Future<List<XFile>> openImagePicker(BuildContext context,
       MediaPickerConfiguration mediaPickerConfiguration) async {
-    List<Media> mediaList = [];
-    await showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return MediaPicker(
-          mediaList: mediaList,
-          onPicked: (selectedList) {
-            mediaList = selectedList;
+    List<XFile> images = await ImagePicker().pickMultiImage();
 
-            Navigator.pop(context);
-          },
-          onCancel: () {
-            mediaList.clear();
-            Navigator.pop(context);
-          },
-          mediaCount: mediaPickerConfiguration.mediaCount,
-          mediaType: mediaPickerConfiguration.mediaType,
-          decoration: PickerDecoration(
-            completeText: mediaPickerConfiguration.completeText,
-            blurStrength: mediaPickerConfiguration.blurStrength,
-            scaleAmount: mediaPickerConfiguration.scaleAmount,
-            counterBuilder: (context, index) {
-              if (index == null) return const SizedBox();
-              return Align(
-                alignment: Alignment.topRight,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.green,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  padding: const EdgeInsets.all(4),
-                  child: Text(
-                    '$index',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        );
-      },
-    );
-
-    return mediaList;
+    return images;
   }
 
   Future<void> _onGalleryPressed(BuildContext context,
       MediaPickerConfiguration mediaPickerConfiguration) async {
     try {
-      List<Media> mediaList =
+      List<XFile> mediaList =
           await openImagePicker(context, mediaPickerConfiguration);
 
       if (mediaList.isNotEmpty) {
         for (var i = 0; i < mediaList.length; i++) {
           var media = mediaList[i];
-          if (media.mediaType == MediaType.image) {
-            widget.onImageSelected(
-                media.file?.path ?? '', '', MessageType.image);
-          } else if (media.mediaType == MediaType.video) {
-            widget.onImageSelected(
-                media.file?.path ?? '', '', MessageType.video);
-          }
+
+          widget.onImageSelected(media.path, '', MessageType.image);
         }
       }
     } catch (e) {

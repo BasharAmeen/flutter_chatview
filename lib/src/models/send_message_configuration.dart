@@ -24,7 +24,6 @@ import 'package:chatview/src/values/enumaration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:media_picker_widget/media_picker_widget.dart';
 
 class SendMessageConfiguration {
   /// Used to give background color to text field.
@@ -93,14 +92,10 @@ class SendMessageConfiguration {
 }
 
 class MediaPickerConfiguration {
-  final MediaCount mediaCount;
-  final MediaType mediaType;
   final String completeText;
   final double blurStrength;
   final double scaleAmount;
   MediaPickerConfiguration({
-    required this.mediaCount,
-    required this.mediaType,
     required this.completeText,
     required this.blurStrength,
     required this.scaleAmount,
