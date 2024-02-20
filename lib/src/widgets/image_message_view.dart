@@ -107,7 +107,7 @@ class ImageMessageView extends StatelessWidget {
                               FirebaseUrl(imageUrl),
                               maxSize: 20,
                             ),
-                            fit: BoxFit.contain,
+                            fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
                               // [ImageNotFoundException] will be thrown if image does not exist on server.
                               if (error is ImageNotFoundException) {
