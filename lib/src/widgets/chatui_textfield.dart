@@ -364,7 +364,11 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
       MediaPickerConfiguration mediaPickerConfiguration) async {
     List<XFile?> images = (mediaPickerConfiguration.isMultiImage
         ? await ImagePicker().pickMultiImage()
-        : [await ImagePicker().pickImage(source: ImageSource.gallery)]);
+        : [
+            await ImagePicker().pickImage(
+              source: ImageSource.gallery,
+            )
+          ]);
 
     return images;
   }

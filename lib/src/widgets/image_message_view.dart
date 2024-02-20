@@ -32,14 +32,14 @@ import 'share_icon.dart';
 
 class ImageMessageView extends StatelessWidget {
   const ImageMessageView({
-    Key? key,
+    super.key,
     required this.message,
     required this.isMessageBySender,
     this.imageMessageConfig,
     this.messageReactionConfig,
     this.highlightImage = false,
     this.highlightScale = 1.2,
-  }) : super(key: key);
+  });
 
   /// Provides message instance of chat.
   final Message message;
@@ -101,50 +101,59 @@ class ImageMessageView extends StatelessWidget {
                         BorderRadius.circular(14),
                     child: (() {
                       if (imageUrl.isUrl) {
-                        return Image(
-                          image: FirebaseImageProvider(FirebaseUrl(imageUrl)),
-                          fit: BoxFit.fill,
-                          errorBuilder: (context, error, stackTrace) {
-                            // [ImageNotFoundException] will be thrown if image does not exist on server.
-                            if (error is ImageNotFoundException) {
-                              // Handle ImageNotFoundException and show a user-friendly message.
-                              return const Text(
-                                  'Image not found on Cloud Storage.');
-                            } else {
-                              // Handle other errors.
-                              return Text('Error loading image: $error');
-                            }
-                          },
-                          // The loading progress may not be accurate as Firebase Storage API
-                          // does not provide a stream of bytes downloaded. The progress updates only at the start and end of the loading process.
-                          loadingBuilder: (_, Widget child,
-                              ImageChunkEvent? loadingProgress) {
-                            if (loadingProgress == null) {
-                              // Show the loaded image if loading is complete.
-                              return child;
-                            } else {
-                              // Show a loading indicator with progress information.
-                              return CircularProgressIndicator(
-                                value: loadingProgress.expectedTotalBytes !=
-                                        null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                        (loadingProgress.expectedTotalBytes ??
-                                            1)
-                                    : null,
-                              );
-                            }
-                          },
+                        return Expanded(
+                          child: Image(
+                            image: FirebaseImageProvider(
+                              FirebaseUrl(imageUrl),
+                              maxSize: 20,
+                            ),
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              // [ImageNotFoundException] will be thrown if image does not exist on server.
+                              if (error is ImageNotFoundException) {
+                                // Handle ImageNotFoundException and show a user-friendly message.
+                                return const Text(
+                                    'Image not found on Cloud Storage.');
+                              } else {
+                                // Handle other errors.
+                                return Text('Error loading image: $error');
+                              }
+                            },
+                            // The loading progress may not be accurate as Firebase Storage API
+                            // does not provide a stream of bytes downloaded. The progress updates only at the start and end of the loading process.
+                            loadingBuilder: (_, Widget child,
+                                ImageChunkEvent? loadingProgress) {
+                              if (loadingProgress == null) {
+                                // Show the loaded image if loading is complete.
+                                return child;
+                              } else {
+                                // Show a loading indicator with progress information.
+                                return CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes !=
+                                          null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          (loadingProgress.expectedTotalBytes ??
+                                              1)
+                                      : null,
+                                );
+                              }
+                            },
+                          ),
                         );
                       } else if (imageUrl.fromMemory) {
-                        return Image.memory(
-                          base64Decode(imageUrl
-                              .substring(imageUrl.indexOf('base64') + 7)),
-                          fit: BoxFit.fill,
+                        return Expanded(
+                          child: Image.memory(
+                            base64Decode(imageUrl
+                                .substring(imageUrl.indexOf('base64') + 7)),
+                            fit: BoxFit.contain,
+                          ),
                         );
                       } else {
-                        return Image.file(
-                          File(imageUrl),
-                          fit: BoxFit.fill,
+                        return Expanded(
+                          child: Image.file(
+                            File(imageUrl),
+                            fit: BoxFit.contain,
+                          ),
                         );
                       }
                     }()),
