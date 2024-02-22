@@ -44,7 +44,7 @@ class ImageMessageConfiguration {
 
   /// Used for giving border radius of image message.
   final BorderRadius? borderRadius;
-
+  final bool? useFastCached;
   const ImageMessageConfiguration({
     this.shareIconConfig,
     this.onTap,
@@ -53,6 +53,7 @@ class ImageMessageConfiguration {
     this.padding,
     this.margin,
     this.borderRadius,
+    this.useFastCached,
   });
 }
 
