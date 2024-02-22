@@ -24,7 +24,6 @@ import 'dart:io';
 
 import 'package:chatview/src/extensions/extensions.dart';
 import 'package:chatview/src/models/models.dart';
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:firebase_cached_image/firebase_cached_image.dart';
 import 'package:flutter/material.dart';
 
@@ -102,50 +101,43 @@ class ImageMessageView extends StatelessWidget {
                         BorderRadius.circular(14),
                     child: (() {
                       if (imageUrl.isUrl) {
-                        return imageMessageConfig?.useFastCached == true
-                            ? FastCachedImage(
-                                url: imageUrl,
-                              )
-                            : Image(
-                                image: FirebaseImageProvider(
-                                  FirebaseUrl(imageUrl),
-                                  maxSize: 20,
-                                ),
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  // [ImageNotFoundException] will be thrown if image does not exist on server.
-                                  if (error is ImageNotFoundException) {
-                                    // Handle ImageNotFoundException and show a user-friendly message.
-                                    return const Text(
-                                        'Image not found on Cloud Storage.');
-                                  } else {
-                                    // Handle other errors.
-                                    return Text('Error loading image: $error');
-                                  }
-                                },
-                                // The loading progress may not be accurate as Firebase Storage API
-                                // does not provide a stream of bytes downloaded. The progress updates only at the start and end of the loading process.
-                                loadingBuilder: (_, Widget child,
-                                    ImageChunkEvent? loadingProgress) {
-                                  if (loadingProgress == null) {
-                                    // Show the loaded image if loading is complete.
-                                    return child;
-                                  } else {
-                                    // Show a loading indicator with progress information.
-                                    return CircularProgressIndicator(
-                                      value:
-                                          loadingProgress.expectedTotalBytes !=
-                                                  null
-                                              ? loadingProgress
-                                                      .cumulativeBytesLoaded /
-                                                  (loadingProgress
-                                                          .expectedTotalBytes ??
-                                                      1)
-                                              : null,
-                                    );
-                                  }
-                                },
+                        return Image(
+                          image: FirebaseImageProvider(
+                            FirebaseUrl(imageUrl),
+                            maxSize: 20,
+                          ),
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            // [ImageNotFoundException] will be thrown if image does not exist on server.
+                            if (error is ImageNotFoundException) {
+                              // Handle ImageNotFoundException and show a user-friendly message.
+                              return const Text(
+                                  'Image not found on Cloud Storage.');
+                            } else {
+                              // Handle other errors.
+                              return Text('Error loading image: $error');
+                            }
+                          },
+                          // The loading progress may not be accurate as Firebase Storage API
+                          // does not provide a stream of bytes downloaded. The progress updates only at the start and end of the loading process.
+                          loadingBuilder: (_, Widget child,
+                              ImageChunkEvent? loadingProgress) {
+                            if (loadingProgress == null) {
+                              // Show the loaded image if loading is complete.
+                              return child;
+                            } else {
+                              // Show a loading indicator with progress information.
+                              return CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes !=
+                                        null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        (loadingProgress.expectedTotalBytes ??
+                                            1)
+                                    : null,
                               );
+                            }
+                          },
+                        );
                       } else if (imageUrl.fromMemory) {
                         return Image.memory(
                           base64Decode(imageUrl
