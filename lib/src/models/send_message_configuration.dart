@@ -26,6 +26,9 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 class SendMessageConfiguration {
+  final String sendTextString;
+  final String cancelTextString;
+
   /// Used to give background color to text field.
   final Color? textFieldBackgroundColor;
 
@@ -73,6 +76,8 @@ class SendMessageConfiguration {
   final MediaPickerConfiguration mediaPickerConfiguration;
   const SendMessageConfiguration({
     required this.mediaPickerConfiguration,
+    required this.sendTextString,
+    required this.cancelTextString,
     this.textFieldConfig,
     this.textFieldBackgroundColor,
     this.imagePickerIconsConfig,

@@ -19,409 +19,285 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import 'dart:async';
-import 'dart:io' show Platform;
-
-import 'package:audio_waveforms/audio_waveforms.dart';
-import 'package:chatview/src/utils/constants/constants.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
+import 'package:appinio_video_player/appinio_video_player.dart';
+import 'package:chatview/chatview.dart';
+import 'package:chatview/src/widgets/chat_list_widget.dart';
+import 'package:chatview/src/widgets/chat_view_inherited_widget.dart';
+import 'package:chatview/src/widgets/chatview_state_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:timeago/timeago.dart';
+import '../values/custom_time_messages.dart';
+import 'send_message_widget.dart';
 
-import 'package:image_picker/image_picker.dart';
+class ChatView extends StatefulWidget {
+  const ChatView({
+    super.key,
+    required this.chatController,
+    required this.currentUser,
+    required this.languageCode,
+    this.onSendTap,
+    this.profileCircleConfig,
+    this.chatBubbleConfig,
+    this.repliedMessageConfig,
+    this.swipeToReplyConfig,
+    this.replyPopupConfig,
+    this.reactionPopupConfig,
+    this.loadMoreData,
+    this.loadingWidget,
+    this.messageConfig,
+    this.isLastPage,
+    this.appBar,
+    ChatBackgroundConfiguration? chatBackgroundConfig,
+    this.typeIndicatorConfig,
+    this.sendMessageBuilder,
+    this.showTypingIndicator = false,
+    required this.sendMessageConfig,
+    this.onChatListTap,
+    required this.chatViewState,
+    ChatViewStateConfiguration? chatViewStateConfig,
+    this.featureActiveConfig = const FeatureActiveConfig(),
+  })  : chatBackgroundConfig =
+            chatBackgroundConfig ?? const ChatBackgroundConfiguration(),
+        chatViewStateConfig =
+            chatViewStateConfig ?? const ChatViewStateConfiguration();
+  final String languageCode;
 
-import '../../chatview.dart';
-import '../utils/debounce.dart';
-import '../utils/package_strings.dart';
+  /// Provides configuration related to user profile circle avatar.
+  final ProfileCircleConfiguration? profileCircleConfig;
 
-class ChatUITextField extends StatefulWidget {
-  const ChatUITextField({
-    Key? key,
-    this.sendMessageConfig,
-    required this.focusNode,
-    required this.textEditingController,
-    required this.onPressed,
-    required this.onRecordingComplete,
-    required this.onImageSelected,
-  }) : super(key: key);
+  /// Provides configurations related to chat bubble such as padding, margin, max
+  /// width etc.
+  final ChatBubbleConfiguration? chatBubbleConfig;
+
+  /// Allow user to giving customisation different types
+  /// messages.
+  final MessageConfiguration? messageConfig;
+
+  /// Provides configuration for replied message view which is located upon chat
+  /// bubble.
+  final RepliedMessageConfiguration? repliedMessageConfig;
+
+  /// Provides configurations related to swipe chat bubble which triggers
+  /// when user swipe chat bubble.
+  final SwipeToReplyConfiguration? swipeToReplyConfig;
+
+  /// Provides configuration for reply snack bar's appearance and options.
+  final ReplyPopupConfiguration? replyPopupConfig;
+
+  /// Provides configuration for reaction pop up appearance.
+  final ReactionPopupConfiguration? reactionPopupConfig;
+
+  /// Allow user to give customisation to background of chat
+  final ChatBackgroundConfiguration chatBackgroundConfig;
+
+  /// Provides callback when user actions reaches to top and needs to load more
+  /// chat
+  final VoidCallBackWithFuture? loadMoreData;
+
+  /// Provides widget for loading view while pagination is enabled.
+  final Widget? loadingWidget;
+
+  /// Provides flag if there is no more next data left in list.
+  final bool? isLastPage;
+
+  /// Provides call back when user tap on send button in text field. It returns
+  /// message, reply message and message type.
+  final StringMessageCallBack? onSendTap;
+
+  /// Provides builder which helps you to make custom text field and functionality.
+  final ReplyMessageWithReturnWidget? sendMessageBuilder;
+
+  @Deprecated('Use [ChatController.setTypingIndicator]  instead')
+
+  /// Allow user to show typing indicator.
+  final bool showTypingIndicator;
+
+  /// Allow user to giving customisation typing indicator.
+  final TypeIndicatorConfiguration? typeIndicatorConfig;
+
+  /// Provides controller for accessing few function for running chat.
+  final ChatController chatController;
 
   /// Provides configuration of default text field in chat.
-  final SendMessageConfiguration? sendMessageConfig;
+  final SendMessageConfiguration sendMessageConfig;
 
-  /// Provides focusNode for focusing text field.
-  final FocusNode focusNode;
+  /// Provides current state of chat.
+  final ChatViewState chatViewState;
 
-  /// Provides functions which handles text field.
-  final TextEditingController textEditingController;
+  /// Provides configuration for chat view state appearance and functionality.
+  final ChatViewStateConfiguration? chatViewStateConfig;
 
-  /// Provides callback when user tap on text field.
-  final VoidCallBack onPressed;
+  /// Provides current user which is sending messages.
+  final ChatUser currentUser;
 
-  /// Provides callback once voice is recorded.
-  final Function(String?) onRecordingComplete;
+  /// Provides configuration for turn on/off specific features.
+  final FeatureActiveConfig featureActiveConfig;
 
-  /// Provides callback when user select images from camera/gallery.
-  final void Function(String emoji, String messageId, MessageType messageType)
-      onImageSelected;
+  /// Provides parameter so user can assign ChatViewAppbar.
+  final Widget? appBar;
 
+  /// Provides callback when user tap on chat list.
+  final VoidCallBack? onChatListTap;
   @override
-  State<ChatUITextField> createState() => _ChatUITextFieldState();
+  State<ChatView> createState() => _ChatViewState();
 }
 
-class _ChatUITextFieldState extends State<ChatUITextField> {
-  final ValueNotifier<String> _inputText = ValueNotifier('');
+class _ChatViewState extends State<ChatView>
+    with SingleTickerProviderStateMixin {
+  final GlobalKey<SendMessageWidgetState> _sendMessageKey = GlobalKey();
+  ValueNotifier<ReplyMessage> replyMessage =
+      ValueNotifier(const ReplyMessage());
 
-  final ImagePicker _imagePicker = ImagePicker();
+  ChatController get chatController => widget.chatController;
 
-  RecorderController? controller;
+  // bool get showTypingIndicator => widget.showTypingIndicator;
 
-  ValueNotifier<bool> isRecording = ValueNotifier(false);
+  ChatBackgroundConfiguration get chatBackgroundConfig =>
+      widget.chatBackgroundConfig;
 
-  SendMessageConfiguration? get sendMessageConfig => widget.sendMessageConfig;
+  ChatViewState get chatViewState => widget.chatViewState;
 
-  VoiceRecordingConfiguration? get voiceRecordingConfig =>
-      widget.sendMessageConfig?.voiceRecordingConfiguration;
+  ChatViewStateConfiguration? get chatViewStateConfig =>
+      widget.chatViewStateConfig;
 
-  ImagePickerIconsConfiguration? get imagePickerIconsConfig =>
-      sendMessageConfig?.imagePickerIconsConfig;
-
-  TextFieldConfiguration? get textFieldConfig =>
-      sendMessageConfig?.textFieldConfig;
-
-  OutlineInputBorder get _outLineBorder => OutlineInputBorder(
-        borderSide: const BorderSide(color: Colors.transparent),
-        borderRadius: textFieldConfig?.borderRadius ??
-            BorderRadius.circular(textFieldBorderRadius),
-      );
-
-  ValueNotifier<TypeWriterStatus> composingStatus =
-      ValueNotifier(TypeWriterStatus.typed);
-
-  late Debouncer debouncer;
+  FeatureActiveConfig get featureActiveConfig => widget.featureActiveConfig;
 
   @override
   void initState() {
-    attachListeners();
-    debouncer = Debouncer(
-        sendMessageConfig?.textFieldConfig?.compositionThresholdTime ??
-            const Duration(seconds: 1));
     super.initState();
+    setLocaleMessages('en', ReceiptsCustomMessages());
+    // Adds current user in users list.
+    chatController.chatUsers.add(widget.currentUser);
+  }
 
-    if (defaultTargetPlatform == TargetPlatform.iOS ||
-        defaultTargetPlatform == TargetPlatform.android) {
-      controller = RecorderController();
+  @override
+  Widget build(BuildContext context) {
+    // Scroll to last message on in hasMessages state.
+    // TODO: Remove this in new versions.
+    // ignore: deprecated_member_use_from_same_package
+    if (widget.showTypingIndicator ||
+        widget.chatController.showTypingIndicator &&
+            chatViewState.hasMessages) {
+      chatController.scrollToLastMessage();
+    }
+    return ChatViewInheritedWidget(
+      chatController: chatController,
+      featureActiveConfig: featureActiveConfig,
+      currentUser: widget.currentUser,
+      child: Container(
+        height:
+            chatBackgroundConfig.height ?? MediaQuery.of(context).size.height,
+        width: chatBackgroundConfig.width ?? MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+          color: chatBackgroundConfig.backgroundColor ?? Colors.white,
+          image: chatBackgroundConfig.backgroundImage != null
+              ? DecorationImage(
+                  fit: BoxFit.fill,
+                  image: NetworkImage(chatBackgroundConfig.backgroundImage!),
+                )
+              : null,
+        ),
+        padding: chatBackgroundConfig.padding,
+        margin: chatBackgroundConfig.margin,
+        child: Column(
+          children: [
+            if (widget.appBar != null) widget.appBar!,
+            Expanded(
+              child: Stack(
+                children: [
+                  if (chatViewState.isLoading)
+                    ChatViewStateWidget(
+                      chatViewStateWidgetConfig:
+                          chatViewStateConfig?.loadingWidgetConfig,
+                      chatViewState: chatViewState,
+                    )
+                  else if (chatViewState.noMessages)
+                    ChatViewStateWidget(
+                      chatViewStateWidgetConfig:
+                          chatViewStateConfig?.noMessageWidgetConfig,
+                      chatViewState: chatViewState,
+                      onReloadButtonTap: chatViewStateConfig?.onReloadButtonTap,
+                    )
+                  else if (chatViewState.isError)
+                    ChatViewStateWidget(
+                      chatViewStateWidgetConfig:
+                          chatViewStateConfig?.errorWidgetConfig,
+                      chatViewState: chatViewState,
+                      onReloadButtonTap: chatViewStateConfig?.onReloadButtonTap,
+                    )
+                  else if (chatViewState.hasMessages)
+                    ValueListenableBuilder<ReplyMessage>(
+                      valueListenable: replyMessage,
+                      builder: (_, state, child) {
+                        return ChatListWidget(
+                          /// TODO: Remove this in future releases.
+                          // ignore: deprecated_member_use_from_same_package
+                          showTypingIndicator: widget.showTypingIndicator,
+                          replyMessage: state,
+                          chatController: widget.chatController,
+                          chatBackgroundConfig: widget.chatBackgroundConfig,
+                          reactionPopupConfig: widget.reactionPopupConfig,
+                          typeIndicatorConfig: widget.typeIndicatorConfig,
+                          chatBubbleConfig: widget.chatBubbleConfig,
+                          loadMoreData: widget.loadMoreData,
+                          isLastPage: widget.isLastPage,
+                          replyPopupConfig: widget.replyPopupConfig,
+                          loadingWidget: widget.loadingWidget,
+                          messageConfig: widget.messageConfig,
+                          profileCircleConfig: widget.profileCircleConfig,
+                          repliedMessageConfig: widget.repliedMessageConfig,
+                          swipeToReplyConfig: widget.swipeToReplyConfig,
+                          onChatListTap: widget.onChatListTap,
+                          assignReplyMessage: (message) => _sendMessageKey
+                              .currentState
+                              ?.assignReplyMessage(message),
+                        );
+                      },
+                    ),
+                  if (featureActiveConfig.enableTextField)
+                    SendMessageWidget(
+                      key: _sendMessageKey,
+                      chatController: chatController,
+                      sendMessageBuilder: widget.sendMessageBuilder,
+                      sendMessageConfig: widget.sendMessageConfig,
+                      backgroundColor: chatBackgroundConfig.backgroundColor,
+                      onSendTap: _onSendTap,
+                      onReplyCallback: (reply) => replyMessage.value = reply,
+                      onReplyCloseCallback: () =>
+                          replyMessage.value = const ReplyMessage(),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _onSendTap(
+    String message,
+    ReplyMessage replyMessage,
+    MessageType messageType,
+  ) {
+    if (widget.sendMessageBuilder == null) {
+      if (widget.onSendTap != null) {
+        widget.onSendTap!(message, replyMessage, messageType);
+      }
+      _assignReplyMessage();
+    }
+    chatController.scrollToLastMessage();
+  }
+
+  void _assignReplyMessage() {
+    if (replyMessage.value.message.isNotEmpty) {
+      replyMessage.value = const ReplyMessage();
     }
   }
 
   @override
   void dispose() {
-    debouncer.dispose();
-    composingStatus.dispose();
-    isRecording.dispose();
-    _inputText.dispose();
+    replyMessage.dispose();
     super.dispose();
-  }
-
-  void attachListeners() {
-    composingStatus.addListener(() {
-      widget.sendMessageConfig?.textFieldConfig?.onMessageTyping
-          ?.call(composingStatus.value);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding:
-          textFieldConfig?.padding ?? const EdgeInsets.symmetric(horizontal: 6),
-      margin: textFieldConfig?.margin,
-      decoration: BoxDecoration(
-        borderRadius: textFieldConfig?.borderRadius ??
-            BorderRadius.circular(textFieldBorderRadius),
-        color: sendMessageConfig?.textFieldBackgroundColor ?? Colors.white,
-      ),
-      child: ValueListenableBuilder<bool>(
-        valueListenable: isRecording,
-        builder: (_, isRecordingValue, child) {
-          return Row(
-            children: [
-              if (isRecordingValue && controller != null && !kIsWeb)
-                AudioWaveforms(
-                  size: Size(MediaQuery.of(context).size.width * 0.53, 50),
-                  recorderController: controller!,
-                  margin: voiceRecordingConfig?.margin,
-                  padding: voiceRecordingConfig?.padding ??
-                      const EdgeInsets.symmetric(horizontal: 8),
-                  decoration: voiceRecordingConfig?.decoration ??
-                      BoxDecoration(
-                        color: voiceRecordingConfig?.backgroundColor,
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                  waveStyle: voiceRecordingConfig?.waveStyle ??
-                      WaveStyle(
-                        extendWaveform: true,
-                        showMiddleLine: false,
-                        waveColor: voiceRecordingConfig?.waveStyle?.waveColor ??
-                            Colors.black,
-                      ),
-                )
-              else
-                Expanded(
-                  child: TextField(
-                    focusNode: widget.focusNode,
-                    controller: widget.textEditingController,
-                    style: textFieldConfig?.textStyle ??
-                        const TextStyle(color: Colors.white),
-                    maxLines: textFieldConfig?.maxLines ?? 5,
-                    minLines: textFieldConfig?.minLines ?? 1,
-                    keyboardType: textFieldConfig?.textInputType,
-                    inputFormatters: textFieldConfig?.inputFormatters,
-                    onChanged: _onChanged,
-                    textCapitalization: textFieldConfig?.textCapitalization ??
-                        TextCapitalization.sentences,
-                    decoration: InputDecoration(
-                      hintText:
-                          textFieldConfig?.hintText ?? PackageStrings.message,
-                      fillColor: sendMessageConfig?.textFieldBackgroundColor ??
-                          Colors.white,
-                      filled: true,
-                      hintStyle: textFieldConfig?.hintStyle ??
-                          TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.grey.shade600,
-                            letterSpacing: 0.25,
-                          ),
-                      contentPadding: textFieldConfig?.contentPadding ??
-                          const EdgeInsets.symmetric(horizontal: 6),
-                      border: _outLineBorder,
-                      focusedBorder: _outLineBorder,
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.transparent),
-                        borderRadius: textFieldConfig?.borderRadius ??
-                            BorderRadius.circular(textFieldBorderRadius),
-                      ),
-                    ),
-                  ),
-                ),
-              ValueListenableBuilder<String>(
-                valueListenable: _inputText,
-                builder: (_, inputTextValue, child) {
-                  if (inputTextValue.isNotEmpty) {
-                    return IconButton(
-                      color: sendMessageConfig?.defaultSendButtonColor ??
-                          Colors.green,
-                      onPressed: () {
-                        widget.onPressed();
-                        _inputText.value = '';
-                      },
-                      icon: sendMessageConfig?.sendButtonIcon ??
-                          const Icon(Icons.send),
-                    );
-                  } else {
-                    return Row(
-                      children: [
-                        if (!isRecordingValue) ...[
-                          if (sendMessageConfig?.enableCameraImagePicker ??
-                              true)
-                            IconButton(
-                              constraints: const BoxConstraints(),
-                              onPressed: () => _onIconPressed(
-                                ImageSource.camera,
-                                config:
-                                    sendMessageConfig?.imagePickerConfiguration,
-                              ),
-                              icon: imagePickerIconsConfig
-                                      ?.cameraImagePickerIcon ??
-                                  Icon(
-                                    Icons.camera_alt_outlined,
-                                    color:
-                                        imagePickerIconsConfig?.cameraIconColor,
-                                  ),
-                            ),
-                          if (sendMessageConfig?.enableGalleryImagePicker ??
-                              true)
-                            IconButton(
-                              constraints: const BoxConstraints(),
-                              onPressed: () => _onGalleryPressed(
-                                  context,
-                                  widget.sendMessageConfig!
-                                      .mediaPickerConfiguration),
-                              icon: imagePickerIconsConfig
-                                      ?.galleryImagePickerIcon ??
-                                  Icon(
-                                    Icons.image,
-                                    color: imagePickerIconsConfig
-                                        ?.galleryIconColor,
-                                  ),
-                            ),
-                        ],
-                        if (sendMessageConfig?.allowRecordingVoice ??
-                            true &&
-                                Platform.isIOS &&
-                                Platform.isAndroid &&
-                                !kIsWeb)
-
-                          // on recording voice icons
-                          Row(
-                            children: [
-                              if (isRecordingValue)
-                                InkWell(
-                                  onTap: () {
-                                    // stop recording
-                                    controller?.stop();
-                                    isRecording.value = false;
-                                    setState(() {});
-                                  },
-                                  child: Text(
-                                    context.locale.languageCode == 'en'
-                                        ? 'cancel'
-                                        : 'إلغاء',
-                                    style: const TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'cairo',
-                                    ),
-                                  ),
-                                ),
-                              if (isRecordingValue)
-                                SizedBox(
-                                    width: sendMessageConfig
-                                            ?.voiceRecordingConfiguration
-                                            ?.spaceBetweenButtons ??
-                                        20),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  InkWell(
-                                    onTap: _recordOrStop,
-                                    child: isRecordingValue
-                                        ? Text(
-                                            context.locale.languageCode == 'en'
-                                                ? "send"
-                                                : "إرسال",
-                                            style: TextStyle(
-                                              color: sendMessageConfig
-                                                      ?.voiceRecordingConfiguration
-                                                      ?.recorderIconColor ??
-                                                  Colors.black,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              fontFamily: 'cairo',
-                                            ),
-                                          )
-                                        : sendMessageConfig
-                                                ?.voiceRecordingConfiguration!
-                                                .micIcon ??
-                                            Icon(
-                                              Icons.mic,
-                                              color: sendMessageConfig
-                                                      ?.voiceRecordingConfiguration
-                                                      ?.recorderIconColor ??
-                                                  Colors.black,
-                                            ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          )
-                      ],
-                    );
-                  }
-                },
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  Future<void> _recordOrStop() async {
-    assert(
-      defaultTargetPlatform == TargetPlatform.iOS ||
-          defaultTargetPlatform == TargetPlatform.android,
-      "Voice messages are only supported with android and ios platform",
-    );
-    if (!isRecording.value) {
-      await controller?.record(
-        sampleRate: voiceRecordingConfig?.sampleRate,
-        bitRate: voiceRecordingConfig?.bitRate,
-        androidEncoder: voiceRecordingConfig?.androidEncoder,
-        iosEncoder: voiceRecordingConfig?.iosEncoder,
-        androidOutputFormat: voiceRecordingConfig?.androidOutputFormat,
-      );
-      isRecording.value = true;
-    } else {
-      final path = await controller?.stop();
-      isRecording.value = false;
-      widget.onRecordingComplete(path);
-    }
-  }
-
-  Future<List<XFile?>> openImagePicker(BuildContext context,
-      MediaPickerConfiguration mediaPickerConfiguration) async {
-    List<XFile?> images = (mediaPickerConfiguration.isMultiImage
-        ? await ImagePicker().pickMultiImage()
-        : [
-            await ImagePicker().pickImage(
-              source: ImageSource.gallery,
-            )
-          ]);
-
-    return images;
-  }
-
-  Future<void> _onGalleryPressed(BuildContext context,
-      MediaPickerConfiguration mediaPickerConfiguration) async {
-    try {
-      List<XFile?> mediaList =
-          await openImagePicker(context, mediaPickerConfiguration);
-
-      if (mediaList.isNotEmpty) {
-        for (var i = 0; i < mediaList.length; i++) {
-          if (mediaList[i] == null) continue;
-          var media = mediaList[i];
-
-          widget.onImageSelected(media!.path, '', MessageType.image);
-        }
-      }
-    } catch (e) {
-      widget.onImageSelected('', e.toString(), MessageType.image);
-    }
-  }
-
-  void _onIconPressed(
-    ImageSource imageSource, {
-    ImagePickerConfiguration? config,
-  }) async {
-    try {
-      final XFile? image = await _imagePicker.pickImage(
-        source: imageSource,
-        maxHeight: config?.maxHeight,
-        maxWidth: config?.maxWidth,
-        imageQuality: config?.imageQuality,
-        preferredCameraDevice:
-            config?.preferredCameraDevice ?? CameraDevice.rear,
-      );
-      String? imagePath = image?.path;
-      if (config?.onImagePicked != null) {
-        String? updatedImagePath = await config?.onImagePicked!(imagePath);
-        if (updatedImagePath != null) imagePath = updatedImagePath;
-      }
-      widget.onImageSelected(imagePath ?? '', '', MessageType.image);
-    } catch (e) {
-      widget.onImageSelected('', e.toString(), MessageType.image);
-    }
-  }
-
-  void _onChanged(String inputText) {
-    debouncer.run(() {
-      composingStatus.value = TypeWriterStatus.typed;
-    }, () {
-      composingStatus.value = TypeWriterStatus.typing;
-    });
-    _inputText.value = inputText;
   }
 }
