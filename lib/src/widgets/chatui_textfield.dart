@@ -24,7 +24,6 @@ import 'dart:io' show Platform;
 
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:chatview/src/utils/constants/constants.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -274,9 +273,8 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
                                     setState(() {});
                                   },
                                   child: Text(
-                                    context.locale.languageCode == 'en'
-                                        ? 'cancel'
-                                        : 'إلغاء',
+                                    sendMessageConfig?.cancelTextString ??
+                                        "cancel",
                                     style: const TextStyle(
                                       color: Colors.red,
                                       fontSize: 16,
@@ -298,9 +296,8 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
                                     onTap: _recordOrStop,
                                     child: isRecordingValue
                                         ? Text(
-                                            context.locale.languageCode == 'en'
-                                                ? "send"
-                                                : "إرسال",
+                                            sendMessageConfig?.sendTextString ??
+                                                "send",
                                             style: TextStyle(
                                               color: sendMessageConfig
                                                       ?.voiceRecordingConfiguration

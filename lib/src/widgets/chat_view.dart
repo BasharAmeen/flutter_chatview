@@ -34,6 +34,7 @@ class ChatView extends StatefulWidget {
     super.key,
     required this.chatController,
     required this.currentUser,
+    required this.languageCode,
     this.onSendTap,
     this.profileCircleConfig,
     this.chatBubbleConfig,
@@ -59,6 +60,7 @@ class ChatView extends StatefulWidget {
             chatBackgroundConfig ?? const ChatBackgroundConfiguration(),
         chatViewStateConfig =
             chatViewStateConfig ?? const ChatViewStateConfiguration();
+  final String languageCode;
 
   /// Provides configuration related to user profile circle avatar.
   final ProfileCircleConfiguration? profileCircleConfig;
